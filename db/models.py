@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from sqlalchemy import String, Integer, Float, Boolean, DateTime, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from db.database import Base
@@ -12,7 +12,7 @@ class Endpoint(Base):
     url: Mapped[str] = mapped_column(String(500), nullable=False)
     interval_seconds: Mapped[int] = mapped_column(Integer, nullable=False, default=60)
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
 
     checks: Mapped[list["Check"]] = relationship(back_populates="endpoint")
 
@@ -30,7 +30,7 @@ class Check(Base):
     status_code: Mapped[int | None] = mapped_column(Integer, nullable=True)
     latency_ms: Mapped[float | None] = mapped_column(Float, nullable=True)
     is_up: Mapped[bool] = mapped_column(Boolean, nullable=False)
-    checked_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    checked_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
     error: Mapped[str | None] = mapped_column(String(500), nullable=True)
 
     endpoint: Mapped["Endpoint"] = relationship(back_populates="checks")
