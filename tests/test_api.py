@@ -1,8 +1,19 @@
 import pytest
 from fastapi.testclient import TestClient
+from db.database import SessionLocal
+from db.models import Endpoint
 from api.main import app
 
 client = TestClient(app)
+
+
+@pytest.fixture(autouse=True)
+def clean_db():
+    yield
+    db = SessionLocal()
+    db.query(Endpoint).delete()
+    db.commit()
+    db.close()
 
 
 def test_create_endpoint():
