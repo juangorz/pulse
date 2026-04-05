@@ -26,3 +26,7 @@ def get_db():
         yield db
     finally:
         db.close()
+
+def create_tables():
+    from db.models import Endpoint, Check
+    Base.metadata.create_all(bind=engine)
